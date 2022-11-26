@@ -88,8 +88,19 @@ def cinema_table():
     df2=df2.reset_index()
     return df2
 
+
+if not os.path.exists('Mains CSVs'):
+        os.makedirs('Mains CSVs')
+
 pd_data = get_dataSet()
+pd_data.to_csv('Mains CSVs/main.csv', index=False)
 
 cinema_df = cinema_table()
+cinema_df.to_csv('Mains CSVs/cinema.csv', index=False)
 
 category_df,province_df = other_tables(pd_data)
+
+category_df.to_csv('Mains CSVs/category.csv', index=False)
+province_df.to_csv('Mains CSVs/province.csv', index=False)
+
+# print(cinema_df)
