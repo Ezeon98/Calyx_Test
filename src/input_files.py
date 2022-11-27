@@ -18,21 +18,25 @@ COLUMNS = ['cod_loc', 'idprovincia','iddepartamento', 'categoria',
 URL = 'https://datos.cultura.gob.ar/dataset/37305de4-3cce-4d4b-9d9a-fec3ca61d09f/resource/'
 MAIN_PATH = 'mains_csv'
 
-def get_dataSet():
+def get_mainDataSet():
     museos = download_file('museos', '4207def0-2ff7-41d5-9095-d42ae8207a5d')
     bibliotecas = download_file('bibliotecas', '01c6c048-dbeb-44e0-8efa-6944f73715d7')
     cines = download_file('cines', 'f7a8edb8-9208-41b0-8f19-d72811dcea97')
     pd_data = pd.concat([museos,bibliotecas,cines])
+    pd_data['provincia'] = pd_data['provincia'].apply(unidecode)
     return pd_data
 
 def download_file(data, idDataset):
-    url = URL + idDataset + '/download/.csv'
-    response = requests.get(url)
     path = f'{data}/{currentYear}-{monthName}'
     file_path = f"{path}/{data}-{currentDate}.csv"
+
     if not os.path.exists(path):
         os.makedirs(path)
-    open(file_path, "wb").write(response.content)
+
+    url = URL + idDataset + '/download/.csv'
+    response = requests.get(url)
+    if response.ok:
+        open(file_path, "wb").write(response.content)
     
     df = process_data(file_path) 
     return df
@@ -59,8 +63,8 @@ def fix_data(df2):
             df2[c] = None
     return df2
 
-def other_tables(pd_data):
-    pd_data['provincia'] = pd_data['provincia'].apply(unidecode)
+def category_file(pd_data):
+
     category_df = pd.DataFrame({"Categoria":['Salas de cine',
                                      'Bibliotecas Populares',
                                      'Espacios de Exhibición Patrimonial'],
@@ -68,13 +72,17 @@ def other_tables(pd_data):
                                     len(pd_data[pd_data['categoria']=='Bibliotecas Populares']),
                                     len(pd_data[pd_data['categoria']=='Espacios de Exhibición Patrimonial'])]})
     
+    return category_df
+
+def province_file(pd_data):
+    
     province_df = pd_data[['provincia']]
     province_df = province_df.groupby(["provincia"])["provincia"].count()
     province_df = province_df.reset_index(name='cantidad')
     
-    return category_df,province_df
+    return province_df
 
-def cinema_table():
+def cinema_file():
     file_path = f"cines/{currentYear}-{monthName}/cines-{currentDate}.csv"
     df2 = pd.read_csv(file_path)
     df2 = df2.filter(items=['provincia','pantallas', 'butacas','espacio_incaa'])
@@ -83,19 +91,16 @@ def cinema_table():
     df2=df2.reset_index()
     return df2
 
-def main():
+def get_files():
     if not os.path.exists(MAIN_PATH):
             os.makedirs(MAIN_PATH)
 
-    pd_data = get_dataSet()
-    pd_data.to_csv(f'{MAIN_PATH}/main.csv', index=False)
+    get_mainDataSet().to_csv(f'{MAIN_PATH}/main.csv', index=False)
 
-    cinema_df = cinema_table()
-    cinema_df.to_csv(f'{MAIN_PATH}/cinema.csv', index=False)
+    province_file(get_mainDataSet()).to_csv(f'{MAIN_PATH}/province.csv', index=False)    
 
-    category_df,province_df = other_tables(pd_data)
+    category_file(get_mainDataSet()).to_csv(f'{MAIN_PATH}/category.csv', index=False)  
 
-    category_df.to_csv(f'{MAIN_PATH}/category.csv', index=False)
-    province_df.to_csv(f'{MAIN_PATH}/province.csv', index=False)
+    cinema_file().to_csv(f'{MAIN_PATH}/cinema.csv', index=False)
 
-# print(cinema_df)
+get_files()
