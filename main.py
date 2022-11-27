@@ -6,6 +6,6 @@ from src.input_files import get_files
 files=['main','cinema','province','category']
 
 get_files()
-# create_tables(create_connection())
+create_tables(create_connection())
 for i in files:
     inject_data(create_connection(), i)

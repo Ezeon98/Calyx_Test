@@ -2,21 +2,21 @@ import requests
 import pandas as pd
 import os
 from datetime import datetime
+from datetime import date
 import calendar 
 from unidecode import unidecode
 
-currentDay = datetime.now().day
-currentMonth = datetime.now().month
-currentYear = datetime.now().year
-currentDate = f'{currentDay}-{currentMonth}-{currentYear}'
-monthName = calendar.month_name[currentMonth]
+now = datetime.now()
+today=date.today()
+monthName = calendar.month_name[today.month]
+
 
 COLUMNS = ['cod_loc', 'idprovincia','iddepartamento', 'categoria', 
            'provincia','localidad', 'nombre',
            'direccion','cp','telefono','mail','web']
 
 URL = 'https://datos.cultura.gob.ar/dataset/37305de4-3cce-4d4b-9d9a-fec3ca61d09f/resource/'
-MAIN_PATH = 'mains_csv'
+MAIN_PATH = 'files/mains_csv'
 
 def get_mainDataSet():
     museos = download_file('museos', '4207def0-2ff7-41d5-9095-d42ae8207a5d')
@@ -24,11 +24,12 @@ def get_mainDataSet():
     cines = download_file('cines', 'f7a8edb8-9208-41b0-8f19-d72811dcea97')
     pd_data = pd.concat([museos,bibliotecas,cines])
     pd_data['provincia'] = pd_data['provincia'].apply(unidecode)
+    pd_data['fecha'] = now
     return pd_data
 
 def download_file(data, idDataset):
-    path = f'{data}/{currentYear}-{monthName}'
-    file_path = f"{path}/{data}-{currentDate}.csv"
+    path = f'files/{data}/{today.year}-{monthName}'
+    file_path = f"{path}/{data}-{today}.csv"
 
     if not os.path.exists(path):
         os.makedirs(path)
@@ -72,24 +73,27 @@ def category_file(pd_data):
                                     len(pd_data[pd_data['categoria']=='Bibliotecas Populares']),
                                     len(pd_data[pd_data['categoria']=='Espacios de Exhibición Patrimonial'])]})
     
+    category_df['fecha'] = now
     return category_df
 
 def province_file(pd_data):
-    
     province_df = pd_data[['provincia']]
     province_df = province_df.groupby(["provincia"])["provincia"].count()
     province_df = province_df.reset_index(name='cantidad')
-    
+    province_df['fecha'] = now
     return province_df
 
 def cinema_file():
-    file_path = f"cines/{currentYear}-{monthName}/cines-{currentDate}.csv"
-    df2 = pd.read_csv(file_path)
-    df2 = df2.filter(items=['provincia','pantallas', 'butacas','espacio_incaa'])
-    df2['espacio_incaa'] = df2['espacio_incaa'].replace(['Si','No'], [1,0])
-    df2 = df2.groupby(["provincia"]).sum()
-    df2=df2.reset_index()
-    return df2
+    file_path = f"files/cines/{today.year}-{monthName}/cines-{today}.csv"
+    cinema_df = pd.read_csv(file_path)
+    
+    cinema_df = cinema_df.filter(items=['provincia','pantallas', 'butacas','espacio_incaa'])
+    cinema_df['espacio_incaa'] = cinema_df['espacio_incaa'].replace(['Si','No'], [1,0])
+    cinema_df = cinema_df.groupby(["provincia"]).sum()
+    cinema_df=cinema_df.reset_index()
+    cinema_df['fecha'] = now
+    
+    return cinema_df
 
 def get_files():
     if not os.path.exists(MAIN_PATH):
@@ -103,4 +107,4 @@ def get_files():
 
     cinema_file().to_csv(f'{MAIN_PATH}/cinema.csv', index=False)
 
-get_files()
+# get_files()

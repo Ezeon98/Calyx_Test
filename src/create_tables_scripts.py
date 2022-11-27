@@ -1,4 +1,4 @@
-from sqlalchemy import MetaData, Table, Column, Integer, String
+from sqlalchemy import MetaData, Table, Column, Integer, String, DateTime
 
 def create_tables(engine):
     meta=MetaData()
@@ -6,18 +6,21 @@ def create_tables(engine):
     'cinema', meta, 
     Column('provincia', String), 
     Column('cantidad', Integer), 
+    Column('fecha', DateTime)
         )
     
     Tcategory=Table(
     'category', meta, 
     Column('Categoria', String), 
     Column('cantidad', Integer), 
+    Column('fecha', DateTime)
         )
     
     Tprovince=Table(
     'province', meta, 
     Column('provincia', String), 
     Column('cantidad', Integer), 
+    Column('fecha', DateTime)
         )
 
     Tmain=Table(
@@ -33,7 +36,8 @@ def create_tables(engine):
     Column('cp', String),
     Column('telefono', String),
     Column('mail', String),
-    Column('web', String)
+    Column('web', String),
+    Column('fecha', DateTime)
         )
     
     meta.create_all(engine)
