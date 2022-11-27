@@ -12,6 +12,14 @@ now = datetime.now()
 today=date.today()
 monthName = calendar.month_name[today.month]
 
+def build_main_dataSet(dataframes):
+    pd_data = pd.concat(dataframes)
+    pd_data['provincia'] = pd_data['provincia'].apply(unidecode)
+    pd_data['fecha'] = now
+    return pd_data
+
+
+
 def process_data(path):
     df2 = pd.read_csv(path)
     fix_data(df2)

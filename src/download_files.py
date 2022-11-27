@@ -6,7 +6,7 @@ from datetime import date
 import calendar 
 from unidecode import unidecode
 from src.logger import log
-from src.preprocessing_data import process_data, fix_data, province_file, cinema_file, category_file
+from src.preprocessing_data import process_data, fix_data, province_file, cinema_file, category_file, build_main_dataSet
 
 now = datetime.now()
 today=date.today()
@@ -20,9 +20,7 @@ def get_mainDataSet():
     museos = download_file('museos', '4207def0-2ff7-41d5-9095-d42ae8207a5d')
     bibliotecas = download_file('bibliotecas', '01c6c048-dbeb-44e0-8efa-6944f73715d7')
     cines = download_file('cines', 'f7a8edb8-9208-41b0-8f19-d72811dcea97')
-    pd_data = pd.concat([museos,bibliotecas,cines])
-    pd_data['provincia'] = pd_data['provincia'].apply(unidecode)
-    pd_data['fecha'] = now
+    pd_data = build_main_dataSet([museos,bibliotecas,cines])
     return pd_data
 
 def download_file(data, idDataset):
