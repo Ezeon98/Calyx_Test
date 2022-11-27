@@ -27,33 +27,25 @@ def build_main_dataSet(dataframes):
     pd_data['fecha'] = now # Add the 'fecha' column with actual Datetime
     return pd_data
 
-
-
-def process_data(path):
+def fix_data(path):
     '''
     '''
-    df2 = pd.read_csv(path)
-    fix_data(df2)
-    df2 = df2.filter(items=COLUMNS)  
-    return df2
-
-def fix_data(df2):
-    '''
-    '''
-    df2.columns = df2.columns.str.lower()
-    df2.columns = [unidecode(col) for col in df2.columns]
-    if 'domicilio' in df2.columns:
-        df2.rename(columns = {'domicilio':'direccion'}, inplace = True)
-    if 'cod_localidad' in df2.columns:
-        df2.rename(columns = {'cod_localidad':'cod_loc'}, inplace = True)
-    if 'id_provincia' in df2.columns:
-        df2.rename(columns = {'id_provincia':'idprovincia'}, inplace = True)
-    if 'id_departamento' in df2.columns:
-        df2.rename(columns = {'id_departamento':'iddepartamento'}, inplace = True)
+    df = pd.read_csv(path)
+    df.columns = df.columns.str.lower()
+    df.columns = [unidecode(col) for col in df.columns]
+    if 'domicilio' in df.columns:
+        df.rename(columns = {'domicilio':'direccion'}, inplace = True)
+    if 'cod_localidad' in df.columns:
+        df.rename(columns = {'cod_localidad':'cod_loc'}, inplace = True)
+    if 'id_provincia' in df.columns:
+        df.rename(columns = {'id_provincia':'idprovincia'}, inplace = True)
+    if 'id_departamento' in df.columns:
+        df.rename(columns = {'id_departamento':'iddepartamento'}, inplace = True)
     for c in COLUMNS:
-        if c not in df2.columns:
-            df2[c] = None
-    return df2
+        if c not in df.columns:
+            df[c] = None
+    df = df.filter(items=COLUMNS)
+    return df
 
 def category_file(pd_data):
 

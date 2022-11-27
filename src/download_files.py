@@ -5,7 +5,7 @@ from datetime import date
 import calendar 
 from unidecode import unidecode
 from src.logger import log
-from src.preprocessing_data import process_data, fix_data, province_file, cinema_file, category_file, build_main_dataSet
+from src.preprocessing_data import fix_data, province_file, cinema_file, category_file, build_main_dataSet
 
 
 #Date vars
@@ -58,7 +58,7 @@ def download_file(data, idDataset):
     if response.ok:
         open(file_path, "wb").write(response.content) #Save the file in the correct path
     
-    df = process_data(file_path) 
+    df = fix_data(file_path) 
     return df
 
 def get_files():
