@@ -35,7 +35,10 @@ def download_file(data, idDataset):
         os.makedirs(path)
 
     url = URL + idDataset + '/download/.csv'
-    response = requests.get(url)
+    try:
+        response = requests.get(url)
+    except:
+        log(f'Error on download {data} file', 'error')
     if response.ok:
         open(file_path, "wb").write(response.content)
     
@@ -95,13 +98,16 @@ def cinema_file():
 def get_files():
     if not os.path.exists(MAIN_PATH):
             os.makedirs(MAIN_PATH)
-
-    get_mainDataSet().to_csv(f'{MAIN_PATH}/main.csv', index=False)
-
+    try:
+        get_mainDataSet().to_csv(f'{MAIN_PATH}/main.csv', index=False)
+        log('Main Data Set Download', 'info')
+    except:
+        print('Error on get Main Data Set')
+        log('Error on get Main data set', 'error')
+    
     province_file(get_mainDataSet()).to_csv(f'{MAIN_PATH}/province.csv', index=False)    
-
     category_file(get_mainDataSet()).to_csv(f'{MAIN_PATH}/category.csv', index=False)  
 
     cinema_file().to_csv(f'{MAIN_PATH}/cinema.csv', index=False)
 
-get_files()
+# get_files()
