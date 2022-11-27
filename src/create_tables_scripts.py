@@ -1,8 +1,7 @@
 from sqlalchemy import MetaData, Table, Column, Integer, String
 
-def creates_tables(engine):
+def create_tables(engine):
     meta=MetaData()
-
     Tcinema=Table(
     'cinema', meta, 
     Column('provincia', String), 
@@ -36,5 +35,6 @@ def creates_tables(engine):
     Column('mail', String),
     Column('web', String)
         )
+    
     meta.create_all(engine)
     return True

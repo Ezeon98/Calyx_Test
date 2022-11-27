@@ -11,11 +11,12 @@ currentYear = datetime.now().year
 currentDate = f'{currentDay}-{currentMonth}-{currentYear}'
 monthName = calendar.month_name[currentMonth]
 
-columns = ['cod_loc', 'idprovincia','iddepartamento', 'categoria', 
+COLUMNS = ['cod_loc', 'idprovincia','iddepartamento', 'categoria', 
            'provincia','localidad', 'nombre',
            'direccion','cp','telefono','mail','web']
 
-main_url = 'https://datos.cultura.gob.ar/dataset/37305de4-3cce-4d4b-9d9a-fec3ca61d09f/resource/'
+URL = 'https://datos.cultura.gob.ar/dataset/37305de4-3cce-4d4b-9d9a-fec3ca61d09f/resource/'
+MAIN_PATH = 'mains_csv'
 
 def get_dataSet():
     museos = download_file('museos', '4207def0-2ff7-41d5-9095-d42ae8207a5d')
@@ -25,10 +26,8 @@ def get_dataSet():
     return pd_data
 
 def download_file(data, idDataset):
-    
-    url = main_url + idDataset + '/download/.csv'
+    url = URL + idDataset + '/download/.csv'
     response = requests.get(url)
-    
     path = f'{data}/{currentYear}-{monthName}'
     file_path = f"{path}/{data}-{currentDate}.csv"
     if not os.path.exists(path):
@@ -41,16 +40,12 @@ def download_file(data, idDataset):
 def process_data(path):
     df2 = pd.read_csv(path)
     fix_data(df2)
-    df2 = df2.filter(items=columns)  
+    df2 = df2.filter(items=COLUMNS)  
     return df2
 
 def fix_data(df2):
     df2.columns = df2.columns.str.lower()
     df2.columns = [unidecode(col) for col in df2.columns]
-    # if 'telefono' not in df2.columns:
-    #     df2['telefono'] = None
-    # if 'mail' not in df2.columns:
-    #     df2['mail'] = None
     if 'domicilio' in df2.columns:
         df2.rename(columns = {'domicilio':'direccion'}, inplace = True)
     if 'cod_localidad' in df2.columns:
@@ -59,7 +54,7 @@ def fix_data(df2):
         df2.rename(columns = {'id_provincia':'idprovincia'}, inplace = True)
     if 'id_departamento' in df2.columns:
         df2.rename(columns = {'id_departamento':'iddepartamento'}, inplace = True)
-    for c in columns:
+    for c in COLUMNS:
         if c not in df2.columns:
             df2[c] = None
     return df2
@@ -88,19 +83,19 @@ def cinema_table():
     df2=df2.reset_index()
     return df2
 
+def main():
+    if not os.path.exists(MAIN_PATH):
+            os.makedirs(MAIN_PATH)
 
-if not os.path.exists('Mains CSVs'):
-        os.makedirs('Mains CSVs')
+    pd_data = get_dataSet()
+    pd_data.to_csv(f'{MAIN_PATH}/main.csv', index=False)
 
-pd_data = get_dataSet()
-pd_data.to_csv('Mains CSVs/main.csv', index=False)
+    cinema_df = cinema_table()
+    cinema_df.to_csv(f'{MAIN_PATH}/cinema.csv', index=False)
 
-cinema_df = cinema_table()
-cinema_df.to_csv('Mains CSVs/cinema.csv', index=False)
+    category_df,province_df = other_tables(pd_data)
 
-category_df,province_df = other_tables(pd_data)
-
-category_df.to_csv('Mains CSVs/category.csv', index=False)
-province_df.to_csv('Mains CSVs/province.csv', index=False)
+    category_df.to_csv(f'{MAIN_PATH}/category.csv', index=False)
+    province_df.to_csv(f'{MAIN_PATH}/province.csv', index=False)
 
 # print(cinema_df)
