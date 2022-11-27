@@ -1,9 +1,11 @@
 import pandas as pd
+from src.logger import log
 
+path = 'mains_csv/'
 def inject_data(engine, file):
-    path = 'mains_csv/'
-    df = pd.read_csv(path + file +'.csv').to_sql(file, engine, if_exists='replace', index=False)
-    # print(df)
-
-
-# inject_data(1, 'cinema')
+    try:
+        df = pd.read_csv(path + file +'.csv').to_sql(file, engine, if_exists='replace', index=False)
+        log('Data Injected Succeful', 'info')
+    except Exception as ex:
+        print(ex)
+        log('Error in Data Inject', 'error')

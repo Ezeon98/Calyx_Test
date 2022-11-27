@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 import calendar 
 from unidecode import unidecode
+from src.logger import log
 
 currentDay = datetime.now().day
 currentMonth = datetime.now().month
