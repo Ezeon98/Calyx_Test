@@ -1,4 +1,5 @@
 from sqlalchemy import MetaData, Table, Column, Integer, String, DateTime
+from src.logger import log
 
 def create_tables(engine):
     meta=MetaData()
@@ -39,6 +40,10 @@ def create_tables(engine):
     Column('web', String),
     Column('fecha', DateTime)
         )
-    
-    meta.create_all(engine)
+    try:
+        meta.create_all(engine)
+        log('Tables created Succeful', 'info')
+    except Exception as ex:
+        print(ex)
+        log('Error in tables creation', 'error')
     return True

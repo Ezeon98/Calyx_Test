@@ -9,3 +9,4 @@ get_files()
 create_tables(create_connection())
 for i in files:
     inject_data(create_connection(), i)
+log('inject succeful', 'info')
