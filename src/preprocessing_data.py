@@ -13,20 +13,33 @@ today=date.today()
 monthName = calendar.month_name[today.month]
 
 def build_main_dataSet(dataframes):
+    '''
+    Concatenates the datasets to create the main dataset.
+    Returns a DataFrame
+
+    Params:
+
+    dataframes = list: The three datasets (cinema, museums,libraries)
+
+    '''
     pd_data = pd.concat(dataframes)
-    pd_data['provincia'] = pd_data['provincia'].apply(unidecode)
-    pd_data['fecha'] = now
+    pd_data['provincia'] = pd_data['provincia'].apply(unidecode) #Quit the accents
+    pd_data['fecha'] = now # Add the 'fecha' column with actual Datetime
     return pd_data
 
 
 
 def process_data(path):
+    '''
+    '''
     df2 = pd.read_csv(path)
     fix_data(df2)
     df2 = df2.filter(items=COLUMNS)  
     return df2
 
 def fix_data(df2):
+    '''
+    '''
     df2.columns = df2.columns.str.lower()
     df2.columns = [unidecode(col) for col in df2.columns]
     if 'domicilio' in df2.columns:
