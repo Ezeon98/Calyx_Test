@@ -1,14 +1,12 @@
 import requests
 import pandas as pd
 import os
-from datetime import datetime
 from datetime import date
 import calendar 
 from unidecode import unidecode
 from src.logger import log
 from src.preprocessing_data import process_data, fix_data, province_file, cinema_file, category_file, build_main_dataSet
 
-now = datetime.now()
 today=date.today()
 monthName = calendar.month_name[today.month]
 
