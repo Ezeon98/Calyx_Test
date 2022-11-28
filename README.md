@@ -13,6 +13,9 @@ Then execute "main.py"
 Database credentials must have config in .env file. Example:
 
 DB_NAME='calyx'
+
 DB_USER='postgres'
+
 DB_PASSWORD='Calyx'
+
 DB_HOST='localhost'
