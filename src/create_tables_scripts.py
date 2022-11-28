@@ -2,7 +2,15 @@ from sqlalchemy import MetaData, Table, Column, Integer, String, DateTime
 from src.logger import log
 
 def create_tables(engine):
+    '''
+    Create the tables in the dataBase.
+    The create_all method checks if the tables exists. If the tables exists, don't create new tables.
+
+
+    '''
     meta=MetaData()
+
+    # Design Tables
     Tcinema=Table(
     'cinema', meta, 
     Column('provincia', String), 
@@ -40,8 +48,9 @@ def create_tables(engine):
     Column('web', String),
     Column('fecha', DateTime)
         )
+
     try:
-        meta.create_all(engine)
+        meta.create_all(engine) #Create Tables
         log('Tables created Succeful', 'info')
     except Exception as ex:
         print(ex)

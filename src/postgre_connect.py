@@ -7,6 +7,9 @@ password='Calyx'
 database='calyx'
 
 def create_connection():
+    '''
+    Create connection to the DB. The credential must have in .env file
+    '''
     try:
         engine = create_engine(f"postgresql://{user}:{password}@{host}:5432/{database}")
     except Exception as ex:
