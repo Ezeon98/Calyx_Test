@@ -6,9 +6,13 @@ from src.logger import log
 
 files=['main','cinema','province','category']
 
-get_files()
-create_tables(create_connection())
-for i in files:
-    inject_data(create_connection(), i)
-log('Script Finish', 'info')
+def main():
+    get_files()
+    create_tables(create_connection())
+    for i in files:
+        inject_data(create_connection(), i)
+    log('Script Finish', 'info')
+
+if __name__ == '__main__':
+    main()
 
