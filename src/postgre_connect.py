@@ -1,14 +1,16 @@
-from sqlalchemy import MetaData, Table, Column, Integer, String, text, create_engine
+from sqlalchemy import create_engine
 from src.logger import log
+from decouple import config
 
-host='localhost'
-user='postgres'
-password='Calyx'
-database='calyx'
+
+host= config('DB_HOST')
+user= config('DB_USER')
+password= config('DB_PASSWORD')
+database= config('DB_NAME')
 
 def create_connection():
     '''
-    Create connection to the DB. The credential must have in .env file
+    Create connection to the DB. The credentials must have in .env file
     '''
     try:
         engine = create_engine(f"postgresql://{user}:{password}@{host}:5432/{database}")
