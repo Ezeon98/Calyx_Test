@@ -58,3 +58,5 @@ worksheet.write(4,2, info[13])
 worksheet.write(4,3, real_mean)
 
 workbook.close()
+
+driver.quit()
