@@ -19,7 +19,7 @@ MAIN_PATH = 'files/mains_csv'
 def get_mainDataSet():
     '''
     Download the 3 source files and merge them together to create the main DataFrame.
-    Returns a DataFrame 
+    Returns a DataFrame. 
     '''
     #Download the three dataSets
     museos = download_file('museos', '4207def0-2ff7-41d5-9095-d42ae8207a5d')
